@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:5.0.2
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - /db:/data/db
+    networks:
+      - mern
+
+  express:
+    depends_on:
+      - mongodb
+    build: ./express
+    restart: unless-stopped
+    ports:
+      - 6061:6061
+    volumes:
+      - ./express:/app
+
+    networks:
+      - mern
+
+  frontend:
+    depends_on:
+      - express
+    build: 
+      ./frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    networks:
+      - mern
+
+volumes:
+  db:
+
+networks:
+  mern:
